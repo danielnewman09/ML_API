@@ -1,6 +1,7 @@
 #!flask/bin/python
 from flask import Flask, jsonify
 from flask import request
+import os
 
 from Perform_FFT import parse_data
 
@@ -27,8 +28,12 @@ def model_inference():
     isWarmUp = request.json['isWarmUp']
     spindleSpeed = request.json['spindleSpeed']
     xInference = np.array(request.json['xInference'])
+    basePath = request.json['basePath']
 
-    model_path = 'Models/' + assetId + '/' + dataItemId + '/' + str(isWarmUp).lower() + '/' + str(spindleSpeed) + '/'
+    model_path = basePath + 'Models/' + assetId + '/' + dataItemId + '/' + str(isWarmUp).lower() + '/' + str(spindleSpeed) + '/'
+
+    if not os.path.exists(model_path):
+        return jsonify({'output':False}),201
 
     with open(model_path + 'control_params.json', 'r') as fp:
         param_dict = json.load(fp)
