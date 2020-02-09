@@ -8,7 +8,7 @@ from Perform_FFT import parse_data
 app = Flask(__name__)
 
 import numpy as np
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 @app.route('/features/parse/vibration',methods=['POST'])
 def parse_vibration():
@@ -40,7 +40,7 @@ def model_inference():
 
 
     # Load TFLite model and allocate tensors.
-    interpreter = tf.lite.Interpreter(model_path=model_path + "model.tflite")
+    interpreter = tflite.Interpreter(model_path=model_path + "model.tflite")
     interpreter.allocate_tensors()
 
     # Get input and output tensors.
