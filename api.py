@@ -12,11 +12,11 @@ import tflite_runtime.interpreter as tflite
 
 @app.route('/features/parse/vibration',methods=['POST'])
 def parse_vibration():
-    data = request.json['rawData']
+    values = request.json['values']
     fftPoints = request.json['fftPoints']
     samplingInterval = request.json['samplingInterval']
 
-    output = parse_data(data,fftPoints,samplingInterval)
+    output = parse_data(values,fftPoints,samplingInterval)
 
     return jsonify(output), 201
 
