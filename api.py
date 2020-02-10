@@ -3,6 +3,8 @@ from flask import Flask, jsonify
 from flask import request
 import os
 
+import json
+
 from Perform_FFT import parse_data
 
 app = Flask(__name__)
@@ -27,7 +29,7 @@ def model_inference():
     dataItemId = request.json['dataItemId']
     isWarmUp = request.json['isWarmUp']
     spindleSpeed = request.json['spindleSpeed']
-    xInference = np.array(request.json['xInference'])
+    xInference = np.array(request.json['xInference']).astype(float)
     basePath = request.json['basePath']
 
     model_path = basePath + 'Models/' + assetId + '/' + dataItemId + '/' + str(isWarmUp).lower() + '/' + str(spindleSpeed) + '/'
@@ -87,4 +89,4 @@ def model_inference():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
