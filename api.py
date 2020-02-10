@@ -12,7 +12,7 @@ import tflite_runtime.interpreter as tflite
 
 @app.route('/features/parse/vibration',methods=['POST'])
 def parse_vibration():
-    values = request.json['values']
+    values = np.array(request.json['values']).astype(float)
     fftPoints = request.json['fftPoints']
     samplingInterval = request.json['samplingInterval']
 
