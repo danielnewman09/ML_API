@@ -31,18 +31,21 @@ def model_inference():
     spindleSpeed = request.json['spindleSpeed']
     xInference = np.array(request.json['xInference']).astype(float)
     basePath = request.json['basePath']
+    modelId = request.json['modelId']
+    feature = request.json['feature']
+
 
     model_path = basePath + 'Models/' + assetId + '/' + dataItemId + '/' + str(isWarmUp).lower() + '/' + str(spindleSpeed) + '/'
 
     if not os.path.exists(model_path):
         return jsonify({'output':False}),201
 
-    with open(model_path + 'control_params.json', 'r') as fp:
+    with open(model_path + 'control_params_{}_{}.json'.format(modelId,feature), 'r') as fp:
         param_dict = json.load(fp)
 
 
     # Load TFLite model and allocate tensors.
-    interpreter = tflite.Interpreter(model_path=model_path + "model.tflite")
+    interpreter = tflite.Interpreter(model_path=model_path + "model_{}_{}.tflite".format(modelId,feature))
     interpreter.allocate_tensors()
 
     # Get input and output tensors.
@@ -52,9 +55,11 @@ def model_inference():
     # Test model on random input data.
     input_shape = input_details[0]['shape']
     # input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
-    input_data = xInference.reshape(input_shape)
+    input_data = xInference.reshape(input_shape).astype(np.float32)
 
     num_samples = 100
+
+    all_outputs = np.zeros((num_samples,input_shape[1],input_shape[2]))
 
     for i in range(num_samples):
 
@@ -63,25 +68,37 @@ def model_inference():
 
         # The function `get_tensor()` returns a copy of the tensor data.
         # Use `tensor()` in order to get a pointer to the tensor.
-        output_data = interpreter.get_tensor(output_details[0]['index']).reshape(512,1)
+        output_data = interpreter.get_tensor(output_details[0]['index']).reshape(input_shape)
 
-        if i == 0:
-            all_outputs = output_data
-        else:
-            all_outputs = np.vstack((all_outputs,output_data))
+        all_outputs[i,:,:] = output_data
+
+    print(input_data.shape)
+
+    input_data = np.repeat(input_data,num_samples,axis=0)
+
+    print(all_outputs.shape)
 
     mse = 1 / num_samples * np.sum((all_outputs - input_data)**2,axis=1)
+
+    print(mse.shape)
+
     mse = mse.reshape(int(mse.shape[0] / num_samples),num_samples)
 
-    means = np.mean(mse,axis=1).flatten().tolist()
-    variances = np.var(mse,axis=1).flatten().tolist()
+    print(mse.shape)
 
-    zMeans = (means - param_dict['avgMean']) / param_dict['avgStd']
-    zStds = (variances - param_dict['varMean']) / param_dict['varStd']
+    means = np.mean(mse,axis=1).flatten()
+    variances = np.var(mse,axis=1).flatten()
+
+    zMeans = (means - float(param_dict['avgMean'])) / float(param_dict['avgStd'])
+    zStds = (variances - float(param_dict['varMean'])) / float(param_dict['varStd'])
 
     output = {
-        'means':zMeans,
-        'variances':zStds
+        'valueMean':zMeans.tolist(),
+        'valueStd':zStds.tolist(),
+        'dataItemId':dataItemId,
+        'state':spindleSpeed,
+        'modelId':modelId,
+        'feature':feature
     }
 
 
