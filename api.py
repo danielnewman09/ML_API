@@ -2,6 +2,7 @@
 from flask import Flask, jsonify
 from flask import request
 import os
+import binascii
 
 import json
 
@@ -12,6 +13,23 @@ app = Flask(__name__)
 
 import numpy as np
 import tflite_runtime.interpreter as tflite
+import tensorflow as tf
+
+@app.route('/models/save',methods=['POST'])
+def save_model():
+
+    hex_vals = request.json['values']
+    file_path = request.json['path']
+    file_name = request.json['filename']
+
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+
+
+    with open(file_path + file_name,'wb') as fout:
+        fout.write(binascii.unhexlify(hex_vals))
+
+    return jsonify({'output':True}),201
 
 @app.route('/simulate/vibration',methods=['POST'])
 def simulate_vibration():
@@ -21,10 +39,10 @@ def simulate_vibration():
     amplitudes = np.array([request.json['amplitudes']])
     frequencies = np.array([request.json['frequencies']])
     noiseStd = request.json['noiseStd']
-    phase = 0.
+    phase = 0
 
-    _,signal = create_noisy_signal(duration,samplingRate,frequencies,amplitudes,noiseStd,phase)
-
+    signal = create_noisy_signal(duration,samplingRate,frequencies,amplitudes,noiseStd,phase)
+    signal = signal.tolist()
     output = {'values':signal}
 
     return jsonify(output), 201
@@ -40,8 +58,12 @@ def parse_vibration():
 
     return jsonify(output), 201
 
-@app.route('/models/inference',methods=['POST'])
-def model_inference():
+@app.route('/models/inference/full',methods=['POST'])
+def model_inference_full():
+
+
+@app.route('/models/inference/lite',methods=['POST'])
+def model_inference_lite():
 
     assetId = request.json['assetId']
     dataItemId = request.json['dataItemId']
@@ -54,7 +76,7 @@ def model_inference():
 
 
     model_path = basePath + 'Models/' + assetId + '/' + dataItemId + '/' + str(isWarmUp).lower() + '/' + str(spindleSpeed) + '/'
-
+    print(model_path)
     if not os.path.exists(model_path):
         return jsonify({'output':False}),201
 
@@ -107,6 +129,8 @@ def model_inference():
     means = np.mean(mse,axis=1).flatten()
     variances = np.var(mse,axis=1).flatten()
 
+    #zMeans = means
+    #zStds = variances
     zMeans = (means - float(param_dict['avgMean'])) / float(param_dict['avgStd'])
     zStds = (variances - float(param_dict['varMean'])) / float(param_dict['varStd'])
 

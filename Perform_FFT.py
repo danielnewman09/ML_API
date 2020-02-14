@@ -32,6 +32,7 @@ def parse_data(data,fftPoints,samplingInterval):
     freqs,amps = signal.welch(data, fs=1 / samplingInterval, nperseg=fftPoints, scaling='spectrum')
 
     frequencyInterval = freqs[1] - freqs[0]
+    amps = lin_log_interp(amps)
 
     sampleRMS = np.sqrt(1 / data.shape[0] * np.sum((data - mean)**2))
 
@@ -44,6 +45,29 @@ def parse_data(data,fftPoints,samplingInterval):
               'Skewness':skewness,
               'Variance':variance}
     return output
+
+
+def lin_log_interp(fft_features):
+    '''
+    Scale the fft features from the logarithmic axis to be approximately on 
+    the interval from 0 to 1
+    '''
+
+    # Minimum exponent we expect to see in the data
+    minimum = -12
+
+    # Maximum exponent we expect to see
+    maximum = 0
+
+    # Number of points to use for interpolation
+    numpoints = 1000
+
+    # Map the logarithmic x-axis to a linear y-axis
+    x = np.logspace(minimum,maximum,numpoints)
+    y = np.linspace(0,1,numpoints)
+
+    # Return the interpolated valuess
+    return np.interp(np.log10(fft_features),np.log10(x),y)
 
 if __name__ == '__main__':
 
