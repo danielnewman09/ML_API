@@ -6,11 +6,29 @@ import os
 import json
 
 from Perform_FFT import parse_data
+from Create_Data import create_noisy_signal
 
 app = Flask(__name__)
 
 import numpy as np
 import tflite_runtime.interpreter as tflite
+
+@app.route('/simulate/vibration',methods=['POST'])
+def simulate_vibration():
+
+    duration = request.json['duration']
+    samplingRate = request.json['samplingRate']
+    amplitudes = np.array([request.json['amplitudes']])
+    frequencies = np.array([request.json['frequencies']])
+    noiseStd = request.json['noiseStd']
+    phase = 0.
+
+    _,signal = create_noisy_signal(duration,samplingRate,frequencies,amplitudes,noiseStd,phase)
+
+    output = {'values':signal}
+
+    return jsonify(output), 201
+
 
 @app.route('/features/parse/vibration',methods=['POST'])
 def parse_vibration():
