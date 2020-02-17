@@ -14,6 +14,8 @@ app = Flask(__name__)
 import numpy as np
 import tflite_runtime.interpreter as tflite
 import tensorflow as tf
+import tensorflow.keras as keras
+from Custom_Layers import Dropout_Live
 
 @app.route('/models/save',methods=['POST'])
 def save_model():
@@ -39,9 +41,20 @@ def simulate_vibration():
     amplitudes = np.array([request.json['amplitudes']])
     frequencies = np.array([request.json['frequencies']])
     noiseStd = request.json['noiseStd']
-    phase = 0
 
-    signal = create_noisy_signal(duration,samplingRate,frequencies,amplitudes,noiseStd,phase)
+    NyquistFreq = 0.5 * samplingRate
+
+    amplitudes = np.linspace(1.0,2.5,50)
+    frequencies = np.linspace(0.3 * NyquistFreq, 0.3 * NyquistFreq,1)
+    noiseStdDev = np.linspace(0,0,1)
+    phase = np.linspace(-np.pi/2,np.pi/2,25)
+
+    amplitude = np.random.choice(amplitudes)
+    phase = np.random.choice(phase)
+    print(amplitude)
+    print(phase)
+
+    signal = create_noisy_signal(duration,samplingRate,frequencies,amplitude,noiseStd,phase)
     signal = signal.tolist()
     output = {'values':signal}
 
@@ -81,10 +94,10 @@ def model_inference_full():
 
     new_model = tf.keras.models.load_model(model_path + "model_{}_{}.h5".format(modelId,feature),custom_objects={'Dropout_Live': Dropout_Live})
 
-    num_samples = 100
+    num_samples = 30
 
     xInference = xInference.reshape(1,512,1)
-    xInference = np.repeat(xInference,num_samples,axis=0)
+    X_predict = np.repeat(xInference,num_samples,axis=0)
     predict = new_model.predict(X_predict)
     mse = 1 / num_samples * np.sum((X_predict - predict)**2,axis=1)
     mse = mse.reshape(int(mse.shape[0] / num_samples),num_samples)
@@ -141,7 +154,7 @@ def model_inference_lite():
     # input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
     input_data = xInference.reshape(input_shape).astype(np.float32)
 
-    num_samples = 100
+    num_samples = 1
 
     all_outputs = np.zeros((num_samples,input_shape[1],input_shape[2]))
 
@@ -160,23 +173,30 @@ def model_inference_lite():
 
     input_data = np.repeat(input_data,num_samples,axis=0)
 
-    print(all_outputs.shape)
+    #print(all_outputs.shape)
 
-    mse = 1 / num_samples * np.sum((all_outputs - input_data)**2,axis=1)
+    #mse = 1 / num_samples * np.sum((all_outputs - input_data)**2,axis=1)
 
-    print(mse.shape)
+    #print(mse.shape)
 
-    mse = mse.reshape(int(mse.shape[0] / num_samples),num_samples)
+    #mse = mse.reshape(int(mse.shape[0] / num_samples),num_samples)
 
-    print(mse.shape)
+    #print(mse.shape)
 
-    means = np.mean(mse,axis=1).flatten()
+    mse = keras.metrics.mean_squared_error(all_outputs,input_data)
+    means = np.mean(mse,axis=1)
+    means = np.mean(means)
+
+    #means = np.mean(mse,axis=1).flatten()
     variances = np.var(mse,axis=1).flatten()
 
+    #print(means)
+
     #zMeans = means
-    #zStds = variances
+    zStds = variances
     zMeans = (means - float(param_dict['avgMean'])) / float(param_dict['avgStd'])
-    zStds = (variances - float(param_dict['varMean'])) / float(param_dict['varStd'])
+    #zStds = (variances - float(param_dict['varMean'])) / float(param_dict['varStd'])
+
 
     output = {
         'valueMean':zMeans.tolist(),
