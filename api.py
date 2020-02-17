@@ -60,7 +60,51 @@ def parse_vibration():
 
 @app.route('/models/inference/full',methods=['POST'])
 def model_inference_full():
+    assetId = request.json['assetId']
+    dataItemId = request.json['dataItemId']
+    isWarmUp = request.json['isWarmUp']
+    spindleSpeed = request.json['spindleSpeed']
+    xInference = np.array(request.json['xInference']).astype(float)
+    basePath = request.json['basePath']
+    modelId = request.json['modelId']
+    feature = request.json['feature']
 
+
+    model_path = basePath + 'Models/' + assetId + '/' + dataItemId + '/' + str(isWarmUp).lower() + '/' + str(spindleSpeed) + '/'
+
+    if not os.path.exists(model_path):
+        return jsonify({'output':False}),201
+
+    with open(model_path + 'control_params_{}_{}.json'.format(modelId,feature), 'r') as fp:
+        param_dict = json.load(fp)
+
+
+    new_model = tf.keras.models.load_model(model_path + "model_{}_{}.h5".format(modelId,feature),custom_objects={'Dropout_Live': Dropout_Live})
+
+    num_samples = 100
+
+    xInference = xInference.reshape(1,512,1)
+    xInference = np.repeat(xInference,num_samples,axis=0)
+    predict = new_model.predict(X_predict)
+    mse = 1 / num_samples * np.sum((X_predict - predict)**2,axis=1)
+    mse = mse.reshape(int(mse.shape[0] / num_samples),num_samples)
+
+    means = np.mean(mse,axis=1)
+    variances = np.var(mse,axis=1)
+
+    zMeans = (means - float(param_dict['avgMean'])) / float(param_dict['avgStd'])
+    zStds = (variances - float(param_dict['varMean'])) / float(param_dict['varStd'])
+
+    output = {
+        'valueMean':zMeans.tolist(),
+        'valueStd':zStds.tolist(),
+        'dataItemId':dataItemId,
+        'state':spindleSpeed,
+        'modelId':modelId,
+        'feature':feature
+    }
+
+    return jsonify(output), 201
 
 @app.route('/models/inference/lite',methods=['POST'])
 def model_inference_lite():
