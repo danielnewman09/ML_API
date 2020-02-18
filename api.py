@@ -4,6 +4,8 @@ from flask import request
 import os
 import binascii
 
+import datetime
+
 import json
 
 from Perform_FFT import parse_data
@@ -16,6 +18,12 @@ import tflite_runtime.interpreter as tflite
 import tensorflow as tf
 import tensorflow.keras as keras
 from Custom_Layers import Dropout_Live
+
+
+class TF_Model(object):
+
+    def __init__(self,path):
+
 
 @app.route('/models/save',methods=['POST'])
 def save_model():
@@ -88,17 +96,26 @@ def model_inference_full():
     if not os.path.exists(model_path):
         return jsonify({'output':False}),201
 
-    with open(model_path + 'control_params_{}_{}.json'.format(modelId,feature), 'r') as fp:
+    with open(model_path + 'control_params_{}_{}_full.json'.format(modelId,feature), 'r') as fp:
         param_dict = json.load(fp)
+    
+    start = datetime.datetime.now()
 
+    new_model = tf.keras.models.load_model(model_path + "model_{}_{}_full.h5".format(modelId,feature),custom_objects={'Dropout_Live': Dropout_Live})
 
-    new_model = tf.keras.models.load_model(model_path + "model_{}_{}.h5".format(modelId,feature),custom_objects={'Dropout_Live': Dropout_Live})
+    end = datetime.datetime.now()
 
-    num_samples = 30
+    print((end-start).microseconds)
+
+    num_samples = 1
 
     xInference = xInference.reshape(1,512,1)
     X_predict = np.repeat(xInference,num_samples,axis=0)
+
+    start = datetime.datetime.now()
     predict = new_model.predict(X_predict)
+    end = datetime.datetime.now()
+    print((end - start).microseconds)
     mse = 1 / num_samples * np.sum((X_predict - predict)**2,axis=1)
     mse = mse.reshape(int(mse.shape[0] / num_samples),num_samples)
 
@@ -137,12 +154,12 @@ def model_inference_lite():
     if not os.path.exists(model_path):
         return jsonify({'output':False}),201
 
-    with open(model_path + 'control_params_{}_{}.json'.format(modelId,feature), 'r') as fp:
+    with open(model_path + 'control_params_{}_{}_lite.json'.format(modelId,feature), 'r') as fp:
         param_dict = json.load(fp)
 
 
     # Load TFLite model and allocate tensors.
-    interpreter = tflite.Interpreter(model_path=model_path + "model_{}_{}.tflite".format(modelId,feature))
+    interpreter = tflite.Interpreter(model_path=model_path + "model_{}_{}_lite.tflite".format(modelId,feature))
     interpreter.allocate_tensors()
 
     # Get input and output tensors.

@@ -29,7 +29,7 @@ def parse_data(data,fftPoints,samplingInterval):
 
     NyquistFrequency = 0.5 / samplingInterval
 
-    freqs,amps = signal.welch(data, fs=1 / samplingInterval, nperseg=fftPoints, scaling='density')
+    freqs,amps = signal.welch(data, fs=1 / samplingInterval, nperseg=fftPoints, scaling='spectrum')
 
     frequencyInterval = freqs[1] - freqs[0]
     amps = lin_log_interp(amps)
