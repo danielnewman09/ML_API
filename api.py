@@ -19,11 +19,8 @@ import tensorflow as tf
 import tensorflow.keras as keras
 from Custom_Layers import Dropout_Live
 
-
-class TF_Model(object):
-
-    def __init__(self,path):
-
+keras_model = None
+keras_path = None
 
 @app.route('/models/save',methods=['POST'])
 def save_model():
@@ -81,6 +78,10 @@ def parse_vibration():
 
 @app.route('/models/inference/full',methods=['POST'])
 def model_inference_full():
+
+    global keras_model
+    global keras_path
+
     assetId = request.json['assetId']
     dataItemId = request.json['dataItemId']
     isWarmUp = request.json['isWarmUp']
@@ -98,15 +99,14 @@ def model_inference_full():
 
     with open(model_path + 'control_params_{}_{}_full.json'.format(modelId,feature), 'r') as fp:
         param_dict = json.load(fp)
+
+    if keras_path == model_path:
+        new_model = keras_model
+    else:
+        keras_model = tf.keras.models.load_model(model_path + "model_{}_{}_full.h5".format(modelId,feature),custom_objects={'Dropout_Live': Dropout_Live})
+        new_model = keras_model
+        keras_path = model_path     
     
-    start = datetime.datetime.now()
-
-    new_model = tf.keras.models.load_model(model_path + "model_{}_{}_full.h5".format(modelId,feature),custom_objects={'Dropout_Live': Dropout_Live})
-
-    end = datetime.datetime.now()
-
-    print((end-start).microseconds)
-
     num_samples = 1
 
     xInference = xInference.reshape(1,512,1)
@@ -189,16 +189,6 @@ def model_inference_lite():
     print(input_data.shape)
 
     input_data = np.repeat(input_data,num_samples,axis=0)
-
-    #print(all_outputs.shape)
-
-    #mse = 1 / num_samples * np.sum((all_outputs - input_data)**2,axis=1)
-
-    #print(mse.shape)
-
-    #mse = mse.reshape(int(mse.shape[0] / num_samples),num_samples)
-
-    #print(mse.shape)
 
     mse = keras.metrics.mean_squared_error(all_outputs,input_data)
     means = np.mean(mse,axis=1)
