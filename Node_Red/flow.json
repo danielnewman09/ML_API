@@ -65,21 +65,11 @@
         "willPayload": ""
     },
     {
-        "id": "25594fe.b4fb8b",
-        "type": "ui_tab",
-        "z": "",
-        "name": "Current",
-        "icon": "dashboard",
-        "order": 1,
-        "disabled": false,
-        "hidden": false
-    },
-    {
         "id": "4b064407.63759c",
         "type": "ui_group",
         "z": "",
         "name": "Train Model",
-        "tab": "5f921814.04b088",
+        "tab": "",
         "order": 2,
         "disp": true,
         "width": "15",
@@ -188,7 +178,7 @@
         "type": "ui_group",
         "z": "",
         "name": "Current",
-        "tab": "25594fe.b4fb8b",
+        "tab": "",
         "order": 1,
         "disp": true,
         "width": "6",
@@ -219,21 +209,11 @@
         "type": "ui_group",
         "z": "",
         "name": "Historical",
-        "tab": "25594fe.b4fb8b",
+        "tab": "",
         "order": 2,
         "disp": true,
         "width": "6",
         "collapse": true
-    },
-    {
-        "id": "2d3722f6.e6642e",
-        "type": "ui_tab",
-        "z": "",
-        "name": "Historical",
-        "icon": "dashboard",
-        "order": 5,
-        "disabled": false,
-        "hidden": false
     },
     {
         "id": "6fadd7d4.2fe9a8",
@@ -314,18 +294,10 @@
         "type": "ui_group",
         "z": "",
         "name": "Default",
-        "tab": "6a5bfb49.b01444",
+        "tab": "",
         "disp": true,
         "width": "6",
         "collapse": false
-    },
-    {
-        "id": "6a5bfb49.b01444",
-        "type": "ui_tab",
-        "z": "",
-        "name": "Home",
-        "icon": "dashboard",
-        "order": 4
     },
     {
         "id": "1dcfae73.7c3e22",
@@ -380,15 +352,6 @@
         "collapse": true
     },
     {
-        "id": "5f921814.04b088",
-        "type": "ui_tab",
-        "z": "",
-        "name": "Train Model",
-        "icon": "dashboard",
-        "disabled": false,
-        "hidden": false
-    },
-    {
         "id": "86128784.e8f158",
         "type": "ui_group",
         "z": "",
@@ -429,6 +392,36 @@
         "icon": "dashboard",
         "disabled": false,
         "hidden": false
+    },
+    {
+        "id": "1db4cfba.ba9fd",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Model Fit",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "194aa6.ee59e55a",
+        "type": "ui_group",
+        "z": "",
+        "name": "Model Fit",
+        "tab": "1db4cfba.ba9fd",
+        "order": 1,
+        "disp": true,
+        "width": "15",
+        "collapse": false
+    },
+    {
+        "id": "8f4e5d7b.5eba8",
+        "type": "MySQLdatabase",
+        "z": "",
+        "host": "69.222.133.95",
+        "port": "3306",
+        "db": "db18",
+        "tz": ""
     },
     {
         "id": "ad09ee9.f307f1",
@@ -620,8 +613,8 @@
         "submit": "submit",
         "cancel": "cancel",
         "topic": "",
-        "x": 400,
-        "y": 1300,
+        "x": 130,
+        "y": 780,
         "wires": [
             [
                 "343facfa.815074"
@@ -638,8 +631,8 @@
         "console": false,
         "tostatus": false,
         "complete": "false",
-        "x": 690,
-        "y": 1260,
+        "x": 420,
+        "y": 740,
         "wires": []
     },
     {
@@ -650,8 +643,8 @@
         "func": "msg.payload['startDate'] = msg.payload['startDate'].split(\"T\")[0];\nmsg.payload['endDate'] = msg.payload['endDate'].split(\"T\")[0];\n\nmsg.topic = 'Asset/' + msg.payload['assetId'] + '/ModelTrain'\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 540,
-        "y": 1300,
+        "x": 270,
+        "y": 780,
         "wires": [
             [
                 "77cb6d8.8ad9594",
@@ -668,8 +661,8 @@
         "qos": "",
         "retain": "",
         "broker": "49df90a8.db71f",
-        "x": 870,
-        "y": 1300,
+        "x": 600,
+        "y": 780,
         "wires": []
     },
     {
@@ -677,11 +670,11 @@
         "type": "mqtt in",
         "z": "9bdfb12f.9265f",
         "name": "",
-        "topic": "Asset/+/Models",
+        "topic": "Asset/+/LiteModels",
         "qos": "2",
         "datatype": "auto",
         "broker": "49df90a8.db71f",
-        "x": 300,
+        "x": 310,
         "y": 1120,
         "wires": [
             [
@@ -699,8 +692,8 @@
         "console": false,
         "tostatus": false,
         "complete": "false",
-        "x": 790,
-        "y": 980,
+        "x": 610,
+        "y": 1160,
         "wires": []
     },
     {
@@ -798,7 +791,7 @@
             },
             {
                 "t": "set",
-                "p": "payload",
+                "p": "values",
                 "pt": "msg",
                 "to": "payload.values",
                 "tot": "msg"
@@ -818,37 +811,18 @@
         ]
     },
     {
-        "id": "d727d44e.2c1b78",
-        "type": "file",
-        "z": "9bdfb12f.9265f",
-        "name": "Save TFLite Model",
-        "filename": "",
-        "appendNewline": true,
-        "createDir": true,
-        "overwriteFile": "true",
-        "encoding": "none",
-        "x": 1010,
-        "y": 1120,
-        "wires": [
-            [
-                "ff7baf01.6b104",
-                "780f6ad.b2d7a94"
-            ]
-        ]
-    },
-    {
         "id": "86fa2680.1672d8",
         "type": "function",
         "z": "9bdfb12f.9265f",
         "name": "Set File Name",
-        "func": "msg.path = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nmsg.filename = msg.path + 'model_' + msg.modelId + '_' + msg.feature +  '.tflite'\nreturn msg;",
+        "func": "msg.path = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nmsg.filename = 'model_' + msg.modelId + '_' + msg.feature +  '_lite.tflite'\n\nmsg.payload = {};\n\n// msg.payload = msg.values;\n\nmsg.payload.values = msg.values;\nmsg.payload.path = msg.path;\nmsg.payload.filename = msg.filename;\n\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 820,
+        "x": 800,
         "y": 1120,
         "wires": [
             [
-                "d727d44e.2c1b78"
+                "9c3bc549.e2dd48"
             ]
         ]
     },
@@ -857,10 +831,10 @@
         "type": "function",
         "z": "9bdfb12f.9265f",
         "name": "Set Payload",
-        "func": "msg.path = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nmsg.filename = msg.path + 'control_params_' + msg.modelId + '_' + msg.feature + '.json'\n\nmsg.payload = {};\nmsg.payload.avgMean = msg.avgMean;\nmsg.payload.avgStd = msg.avgStd;\nmsg.payload.varMean = msg.varMean;\nmsg.payload.varStd = msg.varStd;\nreturn msg;",
+        "func": "msg.path = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nmsg.filename = msg.path + 'control_params_' + msg.modelId + '_' + msg.feature + '_lite.json'\n\nmsg.payload = {};\nmsg.payload.avgMean = msg.avgMean;\nmsg.payload.avgStd = msg.avgStd;\nmsg.payload.varMean = msg.varMean;\nmsg.payload.varStd = msg.varStd;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 1190,
+        "x": 1170,
         "y": 1120,
         "wires": [
             [
@@ -878,7 +852,7 @@
         "createDir": true,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 1400,
+        "x": 1380,
         "y": 1120,
         "wires": [
             []
@@ -889,11 +863,11 @@
         "type": "mqtt in",
         "z": "9bdfb12f.9265f",
         "name": "",
-        "topic": "Asset/+/Vibration",
+        "topic": "Asset/MMM-EMCO-E350/Vibration",
         "qos": "2",
         "datatype": "auto",
         "broker": "49df90a8.db71f",
-        "x": 300,
+        "x": 240,
         "y": 1200,
         "wires": [
             [
@@ -913,7 +887,8 @@
         "y": 1200,
         "wires": [
             [
-                "3123d6e6.44a93a"
+                "3123d6e6.44a93a",
+                "9785f0e6.dbc96"
             ]
         ]
     },
@@ -934,7 +909,8 @@
         "y": 1200,
         "wires": [
             [
-                "48d82800.69b1c8"
+                "48d82800.69b1c8",
+                "8393a64f.0536b8"
             ]
         ]
     },
@@ -959,7 +935,7 @@
         "type": "function",
         "z": "9bdfb12f.9265f",
         "name": "",
-        "func": "var basePath = '/home/pi/TF_Fit/';\nvar fs = context.global.fs;\n\nvar allMessages = [];\n\nmsg.payload.dataItemId = msg.dataItemId;\nmsg.payload.modelType = msg.modelType;\nmsg.payload.assetId = msg.assetId;\nmsg.payload.isWarmUp = msg.isWarmUp;\n// msg.payload.spindleSpeed = msg.spindleSpeed;\nmsg.payload.spindleSpeed = 3000;\n// msg.payload.fftPoints = 1024;\n\npath = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nvar files = fs.readdirSync(path);\n\nvar modelTypes = [];\nvar features = [];\n\nvar arrayLength = files.length;\nfor (var i = 0; i < arrayLength; i++) {\n    let thisArray = files[i].split('_');\n    \n    if (thisArray[0].includes('model')){\n        let modelId = thisArray[1];\n        let feature = thisArray[2].replace('.tflite','');\n        \n        let jsonPayload = {};\n        jsonPayload.dataItemId = msg.dataItemId;\n        jsonPayload.modelId = modelId;\n        jsonPayload.assetId = msg.assetId;\n        jsonPayload.isWarmUp = msg.isWarmUp;\n        jsonPayload.spindleSpeed = msg.spindleSpeed;\n        jsonPayload.feature = thisArray[2].replace('.tflite','');\n        jsonPayload.basePath = basePath;\n    \n        if (feature.includes('FFT')) {\n            jsonPayload.xInference = msg.payload.fftAmps;\n        }\n        else if (feature.indludes('Vibration')) {\n            jsonPayload.xInference = msg.payload.Vibration;\n        }\n        \n        let newMessage = {payload: jsonPayload };\n        allMessages.push(newMessage);  \n    }\n}\n\n\nmsg = [allMessages];\n\n// msg.values = msg.payload.values;\n// msg.fftPoints = 1024;\n// msg.samplingInterval = msg.payload.samplingInterval;\n\n// var fs = context.global.fs;\n// msg.assetId = 'MMM-EMCO-E350';\n// msg.dataItemId = 'Vibration';\n// msg.isWarmUp = true;\n// msg.spindleSpeed = 3000;\n// path = msg.payload.basePath + 'Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\n// var files = fs.readdirSync(path);\n\nreturn msg;",
+        "func": "var basePath = '/home/pi/TF_Fit/';\nvar fs = context.global.fs;\n\nvar allMessages = [];\n\nmsg.payload.dataItemId = msg.dataItemId;\nmsg.payload.modelType = msg.modelType;\nmsg.payload.assetId = msg.assetId;\nmsg.payload.isWarmUp = msg.isWarmUp;\nmsg.payload.spindleSpeed = msg.spindleSpeed;\n\n// msg.payload.fftPoints = 1024;\n\npath = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nvar files = fs.readdirSync(path);\n\nvar modelTypes = [];\nvar features = [];\n\nvar arrayLength = files.length;\nfor (var i = 0; i < arrayLength; i++) {\n    let thisArray = files[i].split('_');\n    \n    if (thisArray[0].includes('model') && thisArray[thisArray.length-1].includes('lite')){\n        let modelId = thisArray[1];\n        let feature = thisArray[2].replace('_lite.tflite','');\n        \n        let jsonPayload = {};\n        jsonPayload.dataItemId = msg.dataItemId;\n        jsonPayload.modelId = modelId;\n        jsonPayload.assetId = msg.assetId;\n        jsonPayload.isWarmUp = msg.isWarmUp;\n        jsonPayload.spindleSpeed = msg.spindleSpeed;\n        jsonPayload.feature = thisArray[2];\n        jsonPayload.basePath = basePath;\n    \n        if (feature.includes('FFT')) {\n            jsonPayload.xInference = msg.payload.fftAmps;\n        }\n        else if (feature.indludes('Vibration')) {\n            jsonPayload.xInference = msg.payload.Vibration;\n        }\n        \n        let newMessage = {payload: jsonPayload };\n        allMessages.push(newMessage);  \n    }\n}\n\n\nmsg = [allMessages];\n\n// msg.values = msg.payload.values;\n// msg.fftPoints = 1024;\n// msg.samplingInterval = msg.payload.samplingInterval;\n\n// var fs = context.global.fs;\n// msg.assetId = 'MMM-EMCO-E350';\n// msg.dataItemId = 'Vibration';\n// msg.isWarmUp = true;\n// msg.spindleSpeed = 3000;\n// path = msg.payload.basePath + 'Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\n// var files = fs.readdirSync(path);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 950,
@@ -978,7 +954,7 @@
         "method": "POST",
         "ret": "obj",
         "paytoqs": false,
-        "url": "http://localhost:5000/models/inference",
+        "url": "http://localhost:5000/models/inference/lite",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -987,7 +963,8 @@
         "y": 1200,
         "wires": [
             [
-                "3723f831.ee7ce8"
+                "3723f831.ee7ce8",
+                "549be428.e8331c"
             ]
         ]
     },
@@ -996,53 +973,59 @@
         "type": "debug",
         "z": "9bdfb12f.9265f",
         "name": "",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
-        "x": 1330,
-        "y": 1200,
+        "complete": "true",
+        "targetType": "full",
+        "x": 1350,
+        "y": 1160,
         "wires": []
     },
     {
-        "id": "ea54acd8.53b64",
+        "id": "bf91c1ee.f951b",
+        "type": "http request",
+        "z": "9bdfb12f.9265f",
+        "name": "Simulate Vibration",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "http://localhost:5000/simulate/vibration",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 690,
+        "y": 860,
+        "wires": [
+            [
+                "9e6b48b0.758398"
+            ]
+        ]
+    },
+    {
+        "id": "b66a8503.f5b728",
         "type": "inject",
         "z": "9bdfb12f.9265f",
         "name": "",
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "repeat": "",
+        "repeat": "10",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 500,
-        "y": 1420,
+        "x": 170,
+        "y": 860,
         "wires": [
             [
-                "573974a0.185f3c"
+                "1f6ea585.1b19ca"
             ]
         ]
     },
     {
-        "id": "573974a0.185f3c",
-        "type": "function",
-        "z": "9bdfb12f.9265f",
-        "name": "",
-        "func": "var fs = context.global.fs;\nmsg.assetId = 'MMM-EMCO-E350';\nmsg.dataItemId = 'Vibration';\nmsg.isWarmUp = true;\nmsg.spindleSpeed = 3000;\npath = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\n\nvar files = fs.readdirSync(path);\n\nvar modelTypes = [];\nvar features = [];\n\nvar arrayLength = files.length;\nfor (var i = 0; i < arrayLength; i++) {\n    let thisArray = files[i].split('_');\n    \n    if (thisArray[0].includes('model')){\n        modelTypes.push(thisArray[1]);\n        features.push(thisArray[2].replace('.tflite',''));\n    }\n}\n\nmsg.payload = {};\nmsg.payload.types = modelTypes;\nmsg.payload.features = features;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 740,
-        "y": 1420,
-        "wires": [
-            [
-                "9f899846.28b3a8"
-            ]
-        ]
-    },
-    {
-        "id": "9f899846.28b3a8",
+        "id": "654aa802.404538",
         "type": "debug",
         "z": "9bdfb12f.9265f",
         "name": "",
@@ -1050,9 +1033,513 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
-        "x": 1000,
-        "y": 1440,
+        "complete": "true",
+        "targetType": "full",
+        "x": 950,
+        "y": 780,
         "wires": []
+    },
+    {
+        "id": "6dd62e45.5270f",
+        "type": "function",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "func": "\nmsg.payload = {};\n\nmsg.payload.duration = 1;\nmsg.payload.samplingRate = 4200;\nmsg.payload.amplitudes = 1.0;\nmsg.payload.frequencies = 630;\nmsg.payload.noiseStd = 1e-12;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 860,
+        "wires": [
+            [
+                "bf91c1ee.f951b"
+            ]
+        ]
+    },
+    {
+        "id": "9e6b48b0.758398",
+        "type": "function",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "func": "msg.payload.assetId = 'Simulated Data (No Noise - Vary Amplitude)';\nmsg.payload.dataItemId = 'Vibration'\nmsg.payload.samplingInterval = 1/4200;\nmsg.payload.ProgramName = 'Simulation';\nmsg.payload.SpindleSpeed = 630;\nvar dateTime = new Date(msg.dateTime).toISOString();\nmsg.payload.dateTime = dateTime;\n\nmsg.topic = 'Asset/' + msg.payload.assetId + '/' + msg.payload.dataItemId;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 890,
+        "y": 860,
+        "wires": [
+            [
+                "654aa802.404538",
+                "6b615994.57af08"
+            ]
+        ]
+    },
+    {
+        "id": "1f6ea585.1b19ca",
+        "type": "change",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "dateTime",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 860,
+        "wires": [
+            [
+                "6dd62e45.5270f"
+            ]
+        ]
+    },
+    {
+        "id": "6b615994.57af08",
+        "type": "mqtt out",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "broker": "49df90a8.db71f",
+        "x": 1070,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "9785f0e6.dbc96",
+        "type": "debug",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 610,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "9c3bc549.e2dd48",
+        "type": "http request",
+        "z": "9bdfb12f.9265f",
+        "name": "Save Model",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "http://localhost:5000/models/save",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 990,
+        "y": 1120,
+        "wires": [
+            [
+                "780f6ad.b2d7a94"
+            ]
+        ]
+    },
+    {
+        "id": "549be428.e8331c",
+        "type": "function",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "func": "var thisPayload = msg.payload;\n\ndata = [\n    {label:\"Mean\",payload:thisPayload.valueMean,series:msg.payload.state.toString()}\n    ];\n\nreturn [data];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1350,
+        "y": 1200,
+        "wires": [
+            [
+                "696acfd8.f5c0c"
+            ]
+        ]
+    },
+    {
+        "id": "696acfd8.f5c0c",
+        "type": "ui_chart",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "group": "194aa6.ee59e55a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Control Chart - Simulated Data",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "-3",
+        "ymax": "3",
+        "removeOlder": 1,
+        "removeOlderPoints": "100",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 1590,
+        "y": 1200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4234a1dd.539ef",
+        "type": "inject",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 1350,
+        "y": 1320,
+        "wires": [
+            [
+                "696acfd8.f5c0c"
+            ]
+        ]
+    },
+    {
+        "id": "5067248f.cadcdc",
+        "type": "mqtt in",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "topic": "Asset/+/FullModels",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "49df90a8.db71f",
+        "x": 310,
+        "y": 1080,
+        "wires": [
+            [
+                "ee0292f6.5960d"
+            ]
+        ]
+    },
+    {
+        "id": "3795dbae.df5714",
+        "type": "file",
+        "z": "9bdfb12f.9265f",
+        "name": "Save Model Statistics",
+        "filename": "",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1380,
+        "y": 1080,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c5d3917.565337",
+        "type": "function",
+        "z": "9bdfb12f.9265f",
+        "name": "Set Payload",
+        "func": "msg.path = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nmsg.filename = msg.path + 'control_params_' + msg.modelId + '_' + msg.feature + '_full.json'\n\nmsg.payload = {};\nmsg.payload.avgMean = msg.avgMean;\nmsg.payload.avgStd = msg.avgStd;\nmsg.payload.varMean = msg.varMean;\nmsg.payload.varStd = msg.varStd;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1170,
+        "y": 1080,
+        "wires": [
+            [
+                "3795dbae.df5714"
+            ]
+        ]
+    },
+    {
+        "id": "c65561fb.74e7e",
+        "type": "http request",
+        "z": "9bdfb12f.9265f",
+        "name": "Save Model",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "http://localhost:5000/models/save",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 990,
+        "y": 1080,
+        "wires": [
+            [
+                "c5d3917.565337"
+            ]
+        ]
+    },
+    {
+        "id": "6d94614f.cb24c",
+        "type": "function",
+        "z": "9bdfb12f.9265f",
+        "name": "Set File Name",
+        "func": "msg.path = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nmsg.filename = 'model_' + msg.modelId + '_' + msg.feature +  '_full.h5'\n\nmsg.payload = {};\n\n\nmsg.payload.values = msg.values;\nmsg.payload.path = msg.path;\nmsg.payload.filename = msg.filename;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 800,
+        "y": 1080,
+        "wires": [
+            [
+                "c65561fb.74e7e"
+            ]
+        ]
+    },
+    {
+        "id": "f8b508a6.f006c8",
+        "type": "change",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "avgMean",
+                "pt": "msg",
+                "to": "payload.avgMean",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "avgStd",
+                "pt": "msg",
+                "to": "payload.avgStd",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "varMean",
+                "pt": "msg",
+                "to": "payload.varMean",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "varStd",
+                "pt": "msg",
+                "to": "payload.varStd",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "assetId",
+                "pt": "msg",
+                "to": "payload.assetId",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "isWarmUp",
+                "pt": "msg",
+                "to": "payload.isWarmUp",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "spindleSpeed",
+                "pt": "msg",
+                "to": "payload.spindleSpeed",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "modelId",
+                "pt": "msg",
+                "to": "payload.modelId",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "feature",
+                "pt": "msg",
+                "to": "payload.feature",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "dataItemId",
+                "pt": "msg",
+                "to": "payload.dataItemId",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "values",
+                "pt": "msg",
+                "to": "payload.values",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 620,
+        "y": 1080,
+        "wires": [
+            [
+                "6d94614f.cb24c"
+            ]
+        ]
+    },
+    {
+        "id": "ee0292f6.5960d",
+        "type": "json",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 1080,
+        "wires": [
+            [
+                "f8b508a6.f006c8"
+            ]
+        ]
+    },
+    {
+        "id": "da881aae.d0b4b8",
+        "type": "function",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "func": "var basePath = '/home/pi/TF_Fit/';\nvar fs = context.global.fs;\n\nvar allMessages = [];\n\nmsg.payload.dataItemId = msg.dataItemId;\nmsg.payload.modelType = msg.modelType;\nmsg.payload.assetId = msg.assetId;\nmsg.payload.isWarmUp = msg.isWarmUp;\nmsg.payload.spindleSpeed = msg.spindleSpeed;\n\n// msg.payload.fftPoints = 1024;\n\npath = '/home/pi/TF_Fit/Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\nvar files = fs.readdirSync(path);\n\nvar modelTypes = [];\nvar features = [];\n\nvar arrayLength = files.length;\nfor (var i = 0; i < arrayLength; i++) {\n    let thisArray = files[i].split('_');\n    \n    if (thisArray[0].includes('model') && thisArray[thisArray.length-1].includes('full')){\n        let modelId = thisArray[1];\n        let feature = thisArray[2].replace('_full.h5','');\n        \n        let jsonPayload = {};\n        jsonPayload.dataItemId = msg.dataItemId;\n        jsonPayload.modelId = modelId;\n        jsonPayload.assetId = msg.assetId;\n        jsonPayload.isWarmUp = msg.isWarmUp;\n        jsonPayload.spindleSpeed = msg.spindleSpeed;\n        jsonPayload.feature = thisArray[2].replace('_full.h5','');\n        jsonPayload.basePath = basePath;\n    \n        if (feature.includes('FFT')) {\n            jsonPayload.xInference = msg.payload.fftAmps;\n        }\n        else if (feature.indludes('Vibration')) {\n            jsonPayload.xInference = msg.payload.Vibration;\n        }\n        \n        let newMessage = {payload: jsonPayload };\n        allMessages.push(newMessage);  \n    }\n}\n\n\nmsg = [allMessages];\n\n// msg.values = msg.payload.values;\n// msg.fftPoints = 1024;\n// msg.samplingInterval = msg.payload.samplingInterval;\n\n// var fs = context.global.fs;\n// msg.assetId = 'MMM-EMCO-E350';\n// msg.dataItemId = 'Vibration';\n// msg.isWarmUp = true;\n// msg.spindleSpeed = 3000;\n// path = msg.payload.basePath + 'Models/' + msg.assetId + '/' + msg.dataItemId + '/' + msg.isWarmUp.toString() + '/' + msg.spindleSpeed.toString() + '/'\n// var files = fs.readdirSync(path);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1010,
+        "y": 1260,
+        "wires": [
+            [
+                "55319203.5cc38c"
+            ]
+        ]
+    },
+    {
+        "id": "55319203.5cc38c",
+        "type": "http request",
+        "z": "9bdfb12f.9265f",
+        "name": "Fit Features to Model",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "http://localhost:5000/models/inference/full",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1180,
+        "y": 1260,
+        "wires": [
+            [
+                "d4ff00b6.b8a0a"
+            ]
+        ]
+    },
+    {
+        "id": "d4ff00b6.b8a0a",
+        "type": "function",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "func": "var thisPayload = msg.payload;\n\ndata = [\n    {label:\"Mean\",payload:thisPayload.valueMean,series:msg.payload.state.toString()}\n    ];\n\nreturn [data];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1350,
+        "y": 1260,
+        "wires": [
+            [
+                "d4f29eaa.a3a6f"
+            ]
+        ]
+    },
+    {
+        "id": "d4f29eaa.a3a6f",
+        "type": "ui_chart",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "group": "194aa6.ee59e55a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Control Chart - Simulated Data",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "-3",
+        "ymax": "3",
+        "removeOlder": 1,
+        "removeOlderPoints": "100",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 1590,
+        "y": 1260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8393a64f.0536b8",
+        "type": "delay",
+        "z": "9bdfb12f.9265f",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "30",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 900,
+        "y": 1260,
+        "wires": [
+            [
+                "da881aae.d0b4b8"
+            ]
+        ]
     }
 ]
